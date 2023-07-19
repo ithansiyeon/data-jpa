@@ -19,4 +19,9 @@ public class Team {
     @OneToMany(mappedBy = "team")
     @Column(name = "member_idx")
     private List<Member> members = new ArrayList<>();
+
+    public Team(String name) {
+        this.name = name;
+    }
+
 }

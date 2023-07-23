@@ -23,6 +23,14 @@ public class Member {
         this.username = username;
     }
 
+    public Member(String member, int age, Team team) {
+        this.username = member;
+        this.age = age;
+        if(team != null) {
+            changeTeam(team);
+        }
+    }
+
     public void changeTeam(Team team) {
         this.team = team;
         team.getMembers().add(this);

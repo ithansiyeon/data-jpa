@@ -15,6 +15,7 @@ import study.datajpa.entity.Team;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -224,5 +225,35 @@ class MemberRepositoryTest {
             System.out.println("member.teamClass = " + member.getTeam().getClass());
             System.out.println("member.team = " + member.getTeam().getName());
         }
+    }
+
+    @Test
+    public void queryHint() {
+        //given
+        Member member1 = memberRepository.save(new Member("member1", 10));
+        em.flush();
+        em.clear();
+
+        //when 읽기로만 쓰임
+        Member member = memberRepository.findReadOnlyByUsername(member1.getUsername());
+//        Member member = memberRepository.findMemberByUsername(member1.getUsername());
+        member.setUsername("member2");
+
+        em.flush();
+    }
+
+    @Test
+    public void lock() {
+        //given
+        Member member1 = memberRepository.save(new Member("member1", 10));
+        em.flush();
+        em.clear();
+
+        //when 읽기로만 쓰임
+        List<Member> member = memberRepository.findLockByUsername(member1.getUsername());
+//        Member member = memberRepository.findMemberByUsername(member1.getUsername());
+        member.get(0).setUsername("member2");
+
+        em.flush();
     }
 }

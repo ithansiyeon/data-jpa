@@ -1,6 +1,7 @@
 package study.datajpa.repository;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class MemberRepositoryTest {
     @Autowired MemberRepository memberRepository;
     @Autowired TeamRepository teamRepository;
-    @Autowired
+    @PersistenceContext
     EntityManager em;
 
     @Test
@@ -278,6 +279,31 @@ class MemberRepositoryTest {
         List<Member> result = memberRepository.findAll(spec);
 
         Assertions.assertThat(result.size()).isEqualTo(1);
+    }
+
+    @Test
+    public void bulkUpdate() {
+        //given
+        //flush 한 후
+        memberRepository.save(new Member("member1", 10));
+        memberRepository.save(new Member("member2", 19));
+        memberRepository.save(new Member("member3", 21));
+        memberRepository.save(new Member("member4", 30));
+        memberRepository.save(new Member("member5", 40));
+
+        //when
+        int resultCount = memberRepository.bulkAgePlus(20);
+
+       /* em.flush();
+        em.clear();*/
+
+        List<Member> result = memberRepository.findByUsername("member5");
+        Member member5 = result.get(0);
+        System.out.println("member5.getAge() = " + member5.getAge()); //40살로 남아 있어
+
+        //then
+        assertThat(resultCount).isEqualTo(3);
+
     }
 
 }
